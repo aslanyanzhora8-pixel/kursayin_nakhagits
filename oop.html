@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Օբյեկտ Կողմնորոշված Ծրագրավորում</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--teal-deep:#0d4a4a;--teal-mid:#0a6b6b;--teal-bright:#0fb8b8;--teal-light:#7de8e8;--teal-pale:#b8f0f0;--teal-bg:#e6fafa;--accent:#ff6b35;--accent-soft:#ff9a70;--text-dark:#0d1f1f;--text-mid:#2a4a4a;--text-light:#5a8080;--white:#ffffff;--surface:#f0fafa;--card:#ffffff;--border:#c0e8e8;--sidebar-w:240px;--shadow:0 4px 24px rgba(13,74,74,.13);--shadow-lg:0 12px 48px rgba(13,74,74,.2)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans Armenian',sans-serif;background:var(--surface);color:var(--text-dark);min-height:100vh;display:flex}
+.sidebar{width:var(--sidebar-w);background:linear-gradient(170deg,var(--teal-deep) 0%,var(--teal-mid) 60%,#0a8080 100%);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;box-shadow:4px 0 32px rgba(13,74,74,.25)}
+.sidebar-profile{padding:32px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.12);border:3px solid rgba(125,232,232,.5);display:flex;align-items:center;justify-content:center;font-size:32px}
+.profile-name{font-size:13px;font-weight:600;color:var(--teal-pale);text-align:center}
+.profile-role{font-size:11px;color:rgba(184,240,240,.6)}
+.sidebar-nav{flex:1;padding:16px 0;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:14px;padding:12px 20px;color:rgba(184,240,240,.75);text-decoration:none;font-size:13px;font-weight:500;transition:all .25s}
+.nav-item:hover,.nav-item.active{color:var(--white);background:rgba(255,255,255,.08)}
+.nav-item.active{background:rgba(15,184,184,.15)}
+.nav-icon{width:18px;height:18px;opacity:.8}
+.main{margin-left:var(--sidebar-w);flex:1;padding:32px 36px;display:flex;flex-direction:column;gap:24px}
+.breadcrumb{font-size:12px;color:var(--text-light);display:flex;gap:8px;align-items:center}
+.breadcrumb a{color:var(--teal-bright);text-decoration:none;font-weight:500}
+.hero-banner{background:linear-gradient(135deg, #0d3b66 0%, #001f3f 100%);border-radius:24px;padding:40px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-lg)}
+.hero-title{font-size:32px;font-weight:700;margin-bottom:8px}
+.hero-subtitle{font-size:14px;color:var(--teal-light);margin-bottom:24px;font-weight:500}
+.progress-container{max-width:400px;background:rgba(255,255,255,0.15);padding:16px;border-radius:16px;backdrop-filter:blur(10px)}
+.progress-lbl{display:flex;justify-content:between;font-size:12px;margin-bottom:6px;font-weight:600}
+.progress-bar{height:8px;background:rgba(255,255,255,0.2);border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:var(--teal-bright);width:75%}
+.content-grid{display:grid;grid-template-columns:2fr 1fr;gap:24px}
+.section-card{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow);margin-bottom:24px}
+.section-title{font-size:16px;font-weight:700;color:var(--teal-deep);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';display:block;width:4px;height:16px;background:var(--teal-bright);border-radius:2px}
+.topic-list{display:flex;flex-direction:column;gap:12px}
+.topic-item{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:12px}
+.topic-info{display:flex;align-items:center;gap:12px}
+.topic-icon{font-size:20px}
+.topic-name{font-size:13px;font-weight:600;color:var(--text-dark)}
+.status-badge{font-size:11px;padding:4px 12px;border-radius:20px;font-weight:600}
+.status-done{background:#e2fcdb;color:#266317}
+.status-current{background:#fff3cd;color:#856404}
+.status-waiting{background:#e2e3e5;color:#383d41}
+.info-sidebar{display:flex;flex-direction:column;gap:24px}
+.info-item{display:flex;align-items:center;gap:14px;padding:12px 0}
+.info-icon{font-size:24px;background:var(--teal-bg);width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.info-label{font-size:11px;color:var(--text-light);font-weight:500}
+.info-val{font-size:13px;font-weight:600;color:var(--text-dark)}
+.resource-list{display:flex;flex-direction:column;gap:10px}
+.resource-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border-radius:12px;text-decoration:none;color:inherit;border:1px solid transparent;transition:all 0.2s}
+.resource-item:hover{border-color:var(--teal-bright);background:var(--teal-bg)}
+.res-icon{font-size:22px}
+.res-name{font-size:12px;font-weight:600;color:var(--text-dark)}
+.res-type{font-size:10px;color:var(--text-light)}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-profile">
+    <div class="profile-avatar">👤</div>
+    <div class="profile-name">Ժորա Ասլանյան</div>
+    <div class="profile-role">Ուսանող · ՇՏՊՔ</div>
+  </div>
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="index.html">Գլխավոր</a>
+    <a class="nav-item active" href="#">Առարկաներ</a>
+    <a class="nav-item" href="lecturers.html">Դասախոսներ</a>
+    <a class="nav-item" href="chat.html">Զրուցարան</a>
+  </nav>
+</aside>
+<main class="main">
+  <div class="breadcrumb">
+    <a href="index.html">Գլխավոր</a> <span>›</span> <span>Առարկաներ</span> <span>›</span> <span style="color:var(--text-mid);font-weight:600">Օբյեկտ Կողմնորոշված Ծրագրավորում</span>
+  </div>
+  <div class="hero-banner">
+    <div class="hero-title">Օբյեկտ Կողմնորոշված Ծրագրավորում</div>
+    <div class="hero-subtitle">Մոդուլային և վերօգտագործելի կոդի նախագծում</div>
+    <div class="progress-container">
+      <div class="progress-lbl"><span>Ընթացիկ Առաջադիմություն</span><span>75%</span></div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+    </div>
+  </div>
+  <div class="content-grid">
+    <div>
+      <div class="section-card">
+        <div class="section-title">Ուսումնական Թեմաներ</div>
+        <div class="topic-list">
+          <div class="topic-item"><div class="topic-info"><span class="topic-icon">📦</span><span class="topic-name">Ինկապսուլյացիա և Կլասներ</span></div><span class="status-badge status-done">Ավարտված</span></div>
+          <div class="topic-item"><div class="topic-info"><span class="topic-icon">🧬</span><span class="topic-name">Ժառանգականություն (Inheritance)</span></div><span class="status-badge status-done">Ավարտված</span></div>
+          <div class="topic-item"><div class="topic-info"><span class="topic-icon">🎭</span><span class="topic-name">Պոլիմորֆիզմ (Polymorphism)</span></div><span class="status-badge status-current">Ընթացքի մեջ</span></div>
+          <div class="topic-item"><div class="topic-info"><span class="topic-icon">🏛️</span><span class="topic-name">Աբստրակտ Կլասներ և Ինտերֆեյսներ</span></div><span class="status-badge status-waiting">Սպասվում է</span></div>
+          <div class="topic-item"><div class="topic-info"><span class="topic-icon">🛠️</span><span class="topic-name">Նախագծման Շաբլոններ (Design Patterns)</span></div><span class="status-badge status-waiting">Սպասվում է</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="info-sidebar">
+      <div class="section-card">
+        <div class="section-title">Տեղեկատվություն</div>
+        <div class="info-item"><div class="info-icon">👨‍🏫</div><div><div class="info-label">Դասախոս</div><div class="info-val">Նելլի Պողոսյան</div></div></div>
+        <div class="info-item"><div class="info-icon">📊</div><div><div class="info-label">Վերջին Ակտիվություն</div><div class="info-val">92 / 100</div></div></div>
+        <div class="info-item"><div class="info-icon">📅</div><div><div class="info-label">Ժամանակ</div><div class="info-val">Երեքշաբթի 13:00 & Չորեքշաբթի 10:50</div></div></div>
+        <div class="info-item"><div class="info-icon">🏛️</div><div><div class="info-label">Լսարան</div><div class="info-val">Լաբորատորիա 302</div></div></div>
+      </div>
+      <div class="section-card">
+        <div class="section-title">Նյութեր և Հղումներ</div>
+        <div class="resource-list">
+          <a class="resource-item" href="#"><div class="res-icon">📄</div><div><div class="res-name">ՕԿԾ Դասագիրք PDF</div><div class="res-type">PDF · 3.1 MB</div></div></a>
+          <a class="resource-item" href="#"><div class="res-icon">💻</div><div><div class="res-name">Java Playground</div><div class="res-type">Ինտերակտիվ · Օնլայն</div></div></a>
+          <a class="resource-item" href="#"><div class="res-icon">🎬</div><div><div class="res-name">Design Patterns Մաստերկլաս</div><div class="res-type">Տեսանյութ · 2ժ 15ր</div></div></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+</body>
+</html>

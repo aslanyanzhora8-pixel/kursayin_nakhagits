@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Վեբ Տեխնոլոգիաներ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--teal-deep:#0d4a4a;--teal-mid:#0a6b6b;--teal-bright:#0fb8b8;--teal-light:#7de8e8;--teal-pale:#b8f0f0;--teal-bg:#e6fafa;--accent:#ff6b35;--accent-soft:#ff9a70;--text-dark:#0d1f1f;--text-mid:#2a4a4a;--text-light:#5a8080;--white:#ffffff;--surface:#f0fafa;--card:#ffffff;--border:#c0e8e8;--sidebar-w:240px;--shadow:0 4px 24px rgba(13,74,74,.13);--shadow-lg:0 12px 48px rgba(13,74,74,.2)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans Armenian',sans-serif;background:var(--surface);color:var(--text-dark);min-height:100vh;display:flex;overflow-x:hidden}
+.sidebar{width:var(--sidebar-w);background:linear-gradient(170deg,var(--teal-deep) 0%,var(--teal-mid) 60%,#0a8080 100%);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;box-shadow:4px 0 32px rgba(13,74,74,.25);overflow:hidden}
+.sidebar::before{content:'';position:absolute;top:-80px;right:-80px;width:220px;height:220px;border-radius:50%;background:rgba(15,184,184,.12);pointer-events:none}
+.sidebar-profile{padding:32px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.12);border:3px solid rgba(125,232,232,.5);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 0 0 6px rgba(15,184,184,.1)}
+.profile-name{font-size:13px;font-weight:600;color:var(--teal-pale);text-align:center}
+.profile-role{font-size:11px;color:rgba(184,240,240,.6);font-weight:300}
+.sidebar-nav{flex:1;padding:16px 0;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:14px;padding:12px 20px;color:rgba(184,240,240,.75);text-decoration:none;font-size:13px;font-weight:500;transition:all .25s;cursor:pointer;position:relative}
+.nav-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal-bright);transform:scaleY(0);transition:transform .25s;border-radius:0 3px 3px 0}
+.nav-item:hover,.nav-item.active{color:var(--white);background:rgba(255,255,255,.08)}
+.nav-item:hover::before,.nav-item.active::before{transform:scaleY(1)}
+.nav-item.active{background:rgba(15,184,184,.15)}
+.nav-icon{width:18px;height:18px;opacity:.8;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.logout-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.3);border-radius:10px;color:#ff9a70;font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;width:100%;font-family:inherit}
+.logout-btn:hover{background:rgba(255,107,53,.28)}
+
+.main{margin-left:var(--sidebar-w);flex:1;padding:32px 36px;display:flex;flex-direction:column;gap:28px;min-height:100vh}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-light)}
+.breadcrumb a{color:var(--teal-bright);text-decoration:none;font-weight:500}
+.breadcrumb a:hover{opacity:.7}
+.breadcrumb span{color:var(--border)}
+
+.hero-card{background:linear-gradient(135deg,var(--teal-deep) 0%,var(--teal-mid) 50%,#147a7a 100%);border-radius:24px;padding:40px;color:var(--white);display:flex;align-items:center;gap:32px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg)}
+.hero-card::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:rgba(15,184,184,.15)}
+.hero-card::after{content:'';position:absolute;bottom:-60px;left:30%;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.04)}
+.hero-icon{width:80px;height:80px;background:rgba(255,255,255,.12);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:40px;flex-shrink:0;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.hero-info{flex:1;z-index:1}
+.hero-label{font-size:11px;background:rgba(15,184,184,.35);padding:4px 12px;border-radius:20px;display:inline-block;margin-bottom:10px;font-weight:500;letter-spacing:.5px}
+.hero-title{font-size:28px;font-weight:700;line-height:1.2;margin-bottom:8px}
+.hero-desc{font-size:13px;opacity:.8;line-height:1.6;max-width:480px}
+.hero-meta{display:flex;gap:20px;margin-top:16px;z-index:1}
+.hero-stat{display:flex;flex-direction:column;gap:2px}
+.hero-stat-v{font-size:20px;font-weight:700;font-family:'Space Mono',monospace}
+.hero-stat-l{font-size:10px;opacity:.7}
+
+.content-grid{display:grid;grid-template-columns:2fr 1fr;gap:24px;align-items:start}
+.section-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:24px;box-shadow:var(--shadow);margin-bottom:24px}
+.section-title{font-size:15px;font-weight:700;color:var(--teal-deep);margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.section-title::before{content:'';display:block;width:4px;height:16px;background:var(--teal-bright);border-radius:2px}
+
+.resource-list{display:flex;flex-direction:column;gap:12px}
+.resource-item{display:flex;align-items:center;gap:14px;padding:14px 16px;border:1.5px solid var(--border);border-radius:14px;text-decoration:none;color:inherit;transition:all .2s;background:var(--card)}
+.resource-item:hover{border-color:var(--teal-bright);transform:translateX(4px);background:var(--teal-bg)}
+.res-icon{font-size:22px;width:40px;height:40px;border-radius:10px;background:var(--surface);display:flex;align-items:center;justify-content:center}
+.res-name{font-size:13px;font-weight:600;color:var(--text-dark)}
+.res-type{font-size:10px;color:var(--text-light);margin-top:2px}
+.res-status{margin-left:auto;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+
+.info-list{display:flex;flex-direction:column;gap:16px}
+.info-item{display:flex;align-items:center;gap:14px}
+.info-icon{font-size:20px;width:38px;height:38px;border-radius:50%;background:var(--teal-bg);display:flex;align-items:center;justify-content:center;color:var(--teal-mid)}
+.info-label{font-size:10px;color:var(--text-light);font-weight:500}
+.info-val{font-size:13px;font-weight:600;color:var(--text-dark);margin-top:1px}
+
+.task-item{border-left:3px solid var(--border);padding-left:14px;margin-bottom:18px}
+.task-item.high{border-left-color:var(--accent)}
+.task-header{display:flex;justify-content:space-between;align-items:flex-start}
+.task-t{font-size:13px;font-weight:600;color:var(--text-dark)}
+.task-d{font-size:10px;color:var(--accent);font-family:'Space Mono',monospace;font-weight:600}
+.task-p{font-size:11px;color:var(--text-mid);margin-top:4px;line-height:1.4}
+</style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-profile">
+      <div class="profile-avatar">👨‍🎓</div>
+      <div class="profile-name">Ժորա Ասլանյան</div>
+      <div class="profile-role">Ուսանող</div>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item" href="index.html">
+        <span class="nav-icon">🏠</span>
+        <span>Գլխավոր Էջ</span>
+      </a>
+      <a class="nav-item active" href="web.html">
+        <span class="nav-icon">💻</span>
+        <span>Իմ Դասերը</span>
+      </a>
+      <a class="nav-item" href="friends.html">
+        <span class="nav-icon">👥</span>
+        <span>Ընկերներ</span>
+        <span class="nav-badge">12</span>
+      </a>
+      <a class="nav-item" href="chat.html">
+        <span class="nav-icon">💬</span>
+        <span>Զրուցարան</span>
+        <span class="nav-badge">3</span>
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn">🚪 Դուրս Գալ</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="breadcrumb">
+      <a href="index.html">Գլխավոր</a> <span>/</span> <a href="#">Դասընթացներ</a> <span>/</span> <span>Վեբ Տեխնոլոգիաներ</span>
+    </div>
+
+    <div class="hero-card">
+      <div class="hero-icon">🌐</div>
+      <div class="hero-info">
+        <span class="hero-label">ԲԱԺԻՆ · ԿՈՄՊՅՈՒՏԵՐԱԿԱՆ ԳԻՏՈՒԹՅՈՒՆ</span>
+        <h1 class="hero-title">Վեբ Տեխնոլոգիաներ</h1>
+        <p class="hero-desc">Ժամանակակից վեբ հավելվածների մշակում սկսած HTML/CSS հիմունքներից մինչև React framework և Node.js սերվերային տեխնոլոգիաներ։</p>
+      </div>
+      <div class="hero-meta">
+        <div class="hero-stat">
+          <div class="hero-stat-v">88%</div>
+          <div class="hero-stat-l">Ընթացիկ Միավոր</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-v">14 / 16</div>
+          <div class="hero-stat-l">Հաճախելիություն</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div>
+        <div class="section-card">
+          <div class="section-title">Նյութեր և Հղումներ</div>
+          <div class="resource-list">
+            <a class="resource-item" href="#">
+              <div class="res-icon">📄</div>
+              <div>
+                <div class="res-name">HTML5 Դասագիրք</div>
+                <div class="res-type">PDF · 2.4 MB</div>
+              </div>
+              <span class="res-status" style="background:#e0f2fe;color:#0369a1">Կարդացված</span>
+            </a>
+            <a class="resource-item" href="#">
+              <div class="res-icon">🎬</div>
+              <div>
+                <div class="res-name">CSS Grid Տեսադաս</div>
+                <div class="res-type">Տեսանյութ · 45 րոպե</div>
+              </div>
+              <span class="res-status" style="background:#e0f2fe;color:#0369a1">Դիտված</span>
+            </a>
+            <a class="resource-item" href="#">
+              <div class="res-icon">💻</div>
+              <div>
+                <div class="res-name">JavaScript Վարժություններ</div>
+                <div class="res-type">Ինտերակտիվ · Օնլայն</div>
+              </div>
+              <span class="res-status" style="background:#fef3c7;color:#b45309">Ընթացքի մեջ</span>
+            </a>
+            <a class="resource-item" href="#">
+              <div class="res-icon">🚀</div>
+              <div>
+                <div class="res-name">React Hooks Ուղեցույց</div>
+                <div class="res-type">Հոդված · 15 րոպե</div>
+              </div>
+              <span class="res-status" style="background:#f3f4f6;color:#4b5563">Չբացված</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-title">Ընթացիկ Առաջադրանքներ</div>
+          <div class="task-item high">
+            <div class="task-header">
+              <div class="task-t">Լաբորատոր Աշխատանք 4: React Սփա Պրոյեկտ</div>
+              <div class="task-d">Վերջնաժամկետ՝ Մայիս 22</div>
+            </div>
+            <div class="task-p">Ստեղծել նավիգացիոն համակարգով վեբ կայք՝ օգտագործելով React Router և պահպանել տվյալները Context API-ի միջոցով։</div>
+          </div>
+          <div class="task-item">
+            <div class="task-header">
+              <div class="task-t">Տնային Աշխատանք: CSS Անիմացիաներ</div>
+              <div class="task-d">Վերջնաժամկետ՝ Մայիս 28</div>
+            </div>
+            <div class="task-p">Պատրաստել ինտերակտիվ կոճակներ և էջի բեռնման (loader) անիմացիաներ՝ օգտագործելով միայն մաքուր CSS `@keyframes` կանոնները։</div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-card">
+          <div class="section-title">Տեղեկատվություն</div>
+          <div class="info-list">
+            <div class="info-item">
+              <div class="info-icon">👩‍🏫</div>
+              <div>
+                <div class="info-label">Դասախոս</div>
+                <div class="info-val">Նելլի Պողոսյան</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">📅</div>
+              <div>
+                <div class="info-label">Ժամեր</div>
+                <div class="info-val">Երեքշաբթի 10:50 & Չորեքշաբթի 13:00</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">🏛️</div>
+              <div>
+                <div class="info-label">Լսարան</div>
+                <div class="info-val">Համակարգչային Լաբ 301</div>
+              </div>
+            </div>
+            <div class="info-item">
+              <div class="info-icon">📊</div>
+              <div>
+                <div class="info-label">Վերջին Գնահատական</div>
+                <div class="info-val">88 / 100</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

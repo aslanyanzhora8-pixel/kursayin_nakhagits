@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="hy">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ընկերներ</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Armenian:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--teal-deep:#0d4a4a;--teal-mid:#0a6b6b;--teal-bright:#0fb8b8;--teal-light:#7de8e8;--teal-pale:#b8f0f0;--teal-bg:#e6fafa;--accent:#ff6b35;--text-dark:#0d1f1f;--text-mid:#2a4a4a;--text-light:#5a8080;--white:#ffffff;--surface:#f0fafa;--card:#ffffff;--border:#c0e8e8;--sidebar-w:240px;--shadow:0 4px 24px rgba(13,74,74,.13);--shadow-lg:0 12px 48px rgba(13,74,74,.2)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans Armenian',sans-serif;background:var(--surface);color:var(--text-dark);min-height:100vh;display:flex}
+.sidebar{width:var(--sidebar-w);background:linear-gradient(170deg,var(--teal-deep) 0%,var(--teal-mid) 60%,#0a8080 100%);position:fixed;top:0;left:0;bottom:0;display:flex;flex-direction:column;z-index:100;box-shadow:4px 0 32px rgba(13,74,74,.25)}
+.sidebar-profile{padding:32px 20px 24px;display:flex;flex-direction:column;align-items:center;gap:12px;border-bottom:1px solid rgba(255,255,255,.1)}
+.profile-avatar{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.12);border:3px solid rgba(125,232,232,.5);display:flex;align-items:center;justify-content:center;font-size:32px}
+.profile-name{font-size:13px;font-weight:600;color:var(--teal-pale);text-align:center}
+.profile-role{font-size:11px;color:rgba(184,240,240,.6)}
+.sidebar-nav{flex:1;padding:16px 0;display:flex;flex-direction:column;gap:2px}
+.nav-item{display:flex;align-items:center;gap:14px;padding:12px 20px;color:rgba(184,240,240,.75);text-decoration:none;font-size:13px;font-weight:500;transition:all .25s;position:relative}
+.nav-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--teal-bright);transform:scaleY(0);transition:transform .25s;border-radius:0 3px 3px 0}
+.nav-item:hover,.nav-item.active{color:var(--white);background:rgba(255,255,255,.08)}
+.nav-item:hover::before,.nav-item.active::before{transform:scaleY(1)}
+.nav-item.active{background:rgba(15,184,184,.15)}
+.nav-icon{width:18px;height:18px;opacity:.8;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--accent);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px}
+.sidebar-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,.1)}
+.logout-btn{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(255,107,53,.15);border:1px solid rgba(255,107,53,.3);border-radius:10px;color:#ff9a70;font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;width:100%;font-family:inherit}
+
+.main{margin-left:var(--sidebar-w);flex:1;padding:32px 36px;display:flex;flex-direction:column;gap:28px;min-height:100vh}
+.page-header{display:flex;align-items:center;justify-content:space-between}
+.page-title{font-size:26px;font-weight:700;color:var(--teal-deep)}
+.page-title span{color:var(--teal-bright)}
+.search-bar{display:flex;align-items:center;gap:10px;background:var(--card);border:1.5px solid var(--border);border-radius:12px;padding:9px 16px;box-shadow:var(--shadow);width:280px}
+.search-bar:focus-within{border-color:var(--teal-bright)}
+.search-bar input{border:none;outline:none;background:transparent;font-family:inherit;font-size:13px;color:var(--text-dark);flex:1}
+.search-bar input::placeholder{color:var(--text-light)}
+
+.tabs{display:flex;gap:4px;background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:4px;box-shadow:var(--shadow);align-self:flex-start}
+.tab{padding:8px 20px;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;color:var(--text-light);border:none;background:transparent;font-family:inherit}
+.tab.active{background:var(--teal-deep);color:var(--white)}
+.tab:hover:not(.active){color:var(--teal-mid);background:var(--teal-bg)}
+
+.friends-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:20px}
+.friend-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:14px;box-shadow:var(--shadow);transition:all .3s;cursor:pointer;position:relative}
+.friend-card:hover{transform:translateY(-5px);border-color:var(--teal-bright);box-shadow:var(--shadow-lg)}
+.friend-avatar{width:64px;height:64px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:28px;border:2px solid var(--border)}
+.friend-name{font-size:14px;font-weight:700;color:var(--text-dark);text-align:center}
+.friend-dept{font-size:11px;color:var(--text-light);text-align:center}
+.friend-tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.ftag{font-size:10px;background:var(--teal-bg);color:var(--teal-mid);padding:2px 8px;border-radius:20px;font-weight:600}
+.friend-actions{display:flex;gap:8px;width:100%;margin-top:6px}
+.friend-actions button{flex:1;padding:8px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s}
+.btn-msg{background:var(--teal-deep);color:white;border:none}
+.btn-msg:hover{background:var(--teal-mid)}
+.btn-view{background:transparent;color:var(--text-mid);border:1.5px solid var(--border)}
+.btn-view:hover{background:var(--surface);border-color:var(--teal-mid)}
+.online-dot{position:absolute;top:24px;left:calc(50% + 14px);width:12px;height:12px;background:#22c55e;border-radius:50%;border:2px solid white;z-index:2}
+</style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="sidebar-profile">
+      <div class="profile-avatar">👨‍🎓</div>
+      <div class="profile-name">Ժորա Ասլանյան</div>
+      <div class="profile-role">Ուսանող</div>
+    </div>
+    <nav class="sidebar-nav">
+    <a class="nav-item active" href="index.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Գլխավոր
+    </a>
+    <a class="nav-item" href="friends.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Ընկերներ
+    </a>
+    <a class="nav-item" href="lecturers.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Դասախոսներ
+      <span class="nav-badge">12</span>
+    </a>
+    <a class="nav-item" href="lecturers.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Միջոցառումներ
+    </a>
+    <a class="nav-item" href="#">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      Հայտարարություններ
+      <span class="nav-badge">3</span>
+    </a>
+    <a class="nav-item" href="chat.html">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Զրուցարան
+      <span class="nav-badge">5</span>
+    </a>
+  </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn">🚪 Դուրս Գալ</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <h1 class="page-title">Իմ <span>Ընկերները</span></h1>
+      <div class="search-bar">
+        <span>🔍</span>
+        <input type="text" placeholder="Փնտրել ըստ անվան...">
+      </div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active">Բոլորը (17)</button>
+      <button class="tab">Կուրսեցիներ (17)</button>
+      <button class="tab">Օնլայն (7)</button>
+    </div>
+
+    <div class="friends-grid">
+      <div class="friend-card">
+        <div class="online-dot"></div>
+        <div class="friend-avatar">👨‍💻</div>
+        <div class="friend-name">Արման Հարությունյան</div>
+        <div class="friend-dept">Ինֆորմատիկա և ԿՄ</div>
+        <div class="friend-tags"><span class="ftag">Python</span><span class="ftag">ML</span></div>
+        <div class="friend-actions"><button class="btn-msg" onclick="location.href='chat.html'">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+      <div class="friend-card">
+        <div class="friend-avatar">👩‍💻</div>
+        <div class="friend-name">Մելինե Խաչատրյան</div>
+        <div class="friend-dept">Պարարվեստ</div>
+        <div class="friend-tags"><span class="ftag">Dancer</span><span class="ftag">R</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+      <div class="friend-card">
+        <div class="friend-avatar">👨‍💼</div>
+        <div class="friend-name">Գրիշա Բեյբության</div>
+        <div class="friend-dept">Ինֆորմատիկա և Իրավունք</div>
+        <div class="friend-tags"><span class="ftag">SQL</span><span class="ftag">Law</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+      <div class="friend-card">
+        <div class="online-dot"></div>
+        <div class="friend-avatar">👩‍🔬</div>
+        <div class="friend-name">Ռոզա Ասոյան</div>
+        <div class="friend-dept">Տնտեսագիտական Ինֆորմատիկա</div>
+        <div class="friend-tags"><span class="ftag">Data</span><span class="ftag">Excel</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+      <div class="friend-card">
+        <div class="friend-avatar">👨‍🏫</div>
+        <div class="friend-name">Աղաս Եղոյան</div>
+        <div class="friend-dept">Կոմպյուտերական Գիտություն</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👨‍🏫</div>
+        <div class="friend-name">Յուրա Ղուկասյան</div>
+        <div class="friend-dept">Կոմպյուտերական Գիտություն</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👩‍🔬</div>
+        <div class="friend-name">Արմինե Ղազարյան</div>
+        <div class="friend-dept">Կոմպյուտերական Գիտություն</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👩‍🔬</div>
+        <div class="friend-name">Լիանա Հարոյան</div>
+        <div class="friend-dept">Կոմպյուտերական Գիտություն</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👩‍🔬</div>
+        <div class="friend-name">Ալետա Սևոյան</div>
+        <div class="friend-dept">Վեբ ծրագրավորում</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👨‍🏫</div>
+        <div class="friend-name">Սամվել Կաղզվանցյան</div>
+        <div class="friend-dept">Կոմպյուտերական Գիտություն</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👨‍🏫</div>
+        <div class="friend-name">Նարեկ Մխիթարյան</div>
+        <div class="friend-dept">Ճարտարապետություն</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👨‍🏫</div>
+        <div class="friend-name">Նարեկ Իսահակյան</div>
+        <div class="friend-dept">Լեզվաբան</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👨‍🏫</div>
+        <div class="friend-name">Վալեր Քալաշյան</div>
+        <div class="friend-dept">Մեխանիկա</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	   <div class="friend-card">
+        <div class="friend-avatar">👩‍🔬</div>
+        <div class="friend-name">Մերի Ավետիսյան</div>
+        <div class="friend-dept">Մարկեթինգ</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	   <div class="friend-card">
+        <div class="friend-avatar">👩‍🔬</div>
+        <div class="friend-name">Ամալյա Բաղդասարյան</div>
+        <div class="friend-dept">Լեզվաբան</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👨‍🏫</div>
+        <div class="friend-name">Սամվել Մկրտչյան</div>
+        <div class="friend-dept">Game Development</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  <div class="friend-card">
+        <div class="friend-avatar">👨‍🏫</div>
+        <div class="friend-name">Արման Մայսուրյան</div>
+        <div class="friend-dept">Game Development</div>
+        <div class="friend-tags"><span class="ftag">Java</span><span class="ftag">Spring</span></div>
+        <div class="friend-actions"><button class="btn-msg">Գրել</button><button class="btn-view">Տեսնել</button></div>
+      </div>
+	  
+    </div>
+  </main>
+
+</body>
+</html>
